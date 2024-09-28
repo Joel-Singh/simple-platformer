@@ -1,39 +1,36 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-struct Person;
-
-#[derive(Component)]
-struct Name(String);
+struct LilGuy;
 
 fn main() {
     App::new()
-        .add_systems(Startup, add_people)
-        .add_systems(Update, (hello_world, (update_people, greet_people).chain()))
+        .add_plugins(DefaultPlugins)
+        .add_systems(Startup,  setup)
         .run();
 }
 
-fn greet_people(query: Query<&Name, With<Person>>) {
-    for name in &query {
-        println!("hello {}!", name.0);
-    }
-}
+const LILGUY_SIZE: Vec2 = Vec2::new(120.0, 20.0);
+const LILGUY_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 
-fn update_people(mut query: Query<&mut Name, With<Person>>) {
-    for mut name in &mut query {
-        if name.0 == "Elaina Proctor" {
-            name.0 = "Elaina Hume".to_string();
-            break;
-        }
-    }
-}
-
-fn hello_world() {
-    println!("hello world!");
-}
-
-fn add_people(mut commands: Commands) {
-    commands.spawn((Person, Name("Elaina Proctor".to_string())));
-    commands.spawn((Person, Name("Renzo Hume".to_string())));
-    commands.spawn((Person, Name("Zayna Nieves".to_string())));
+fn setup(
+    mut commands: Commands,
+) {
+    commands.spawn(Camera2dBundle::default());
+    
+    commands.spawn((
+        SpriteBundle {
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 0.0),
+                scale: LILGUY_SIZE.extend(1.0),
+                ..default()
+            },
+            sprite: Sprite {
+                color: LILGUY_COLOR,
+                ..default()
+            },
+            ..default()
+        },
+        LilGuy
+    ));
 }
