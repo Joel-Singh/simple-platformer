@@ -14,7 +14,7 @@ fn main() {
 const LILGUY_SIZE: Vec2 = Vec2::new(120.0, 20.0);
 const LILGUY_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 
-
+const FLOOR_HEIGHT: f32 = 0.0;
 const LILGUY_SPEED: f32 = 500.0;
 
 fn setup(
@@ -45,20 +45,32 @@ fn move_lilguy(
     time: Res<Time>,
 ) {
     let mut lilguy_transform = query.single_mut();
-    let mut direction = 0.0;
+    let mut x_direction = 0.0;
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        direction -= 1.0;
+        x_direction -= 1.0;
     }
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        direction += 1.0;
+        x_direction += 1.0;
+    }
+
+    let mut lilguy_transform = query.single_mut();
+    let mut y_direction = 0.0;
+
+    if keyboard_input.pressed(KeyCode::ArrowUp) {
+        y_direction -= 1.0;
+    }
+
+    if keyboard_input.pressed(KeyCode::ArrowDown) {
+        y_direction += 1.0;
     }
 
 
     // Calculate the new horizontal paddle position based on player input
     let new_position =
-        lilguy_transform.translation.x + direction * LILGUY_SPEED * time.delta_seconds();
+        lilguy_transform.translation.x + x_direction * LILGUY_SPEED * time.delta_seconds();
 
     lilguy_transform.translation.x = new_position;
+    lilguy_transform.translation.y = lilguy_transform.translation.y.max(FLOOR_HEIGHT);
 }
