@@ -3,6 +3,12 @@ use bevy::prelude::*;
 #[derive(Component)]
 struct SnakeHead;
 
+#[derive(Component)]
+struct Position {
+    x: i32,
+    y: i32
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -13,6 +19,9 @@ fn main() {
 
 const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
+
+const ARENA_WIDTH: u32 = 10;
+const ARENA_HEIGHT: u32 = 10;
 
 fn setup(
     mut commands: Commands,
@@ -32,7 +41,11 @@ fn setup(
             },
             ..default()
         },
-        SnakeHead
+        SnakeHead,
+        Position {
+            x: 3,
+            y: 3
+        }
     ));
 }
 
