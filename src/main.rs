@@ -14,6 +14,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate, move_lilguy)
+        .add_systems(FixedUpdate, mapping_position_to_transform)
         .run();
 }
 
@@ -47,6 +48,15 @@ fn setup(
             y: 3
         }
     ));
+}
+
+fn mapping_position_to_transform(
+    mut query: Query<(&mut Position, &mut Transform)>
+) {
+    for (position, mut transform) in &mut query {
+        transform.translation.x = position.x as f32;
+        transform.translation.y = position.y as f32;
+    }
 }
 
 fn move_lilguy(
