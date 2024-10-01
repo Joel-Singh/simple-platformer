@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-struct LilGuy;
+struct SnakeHead;
 
 fn main() {
     App::new()
@@ -11,11 +11,8 @@ fn main() {
         .run();
 }
 
-const LILGUY_SIZE: Vec2 = Vec2::new(120.0, 20.0);
-const LILGUY_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
-
-const FLOOR_HEIGHT: f32 = 0.0;
-const LILGUY_SPEED: f32 = 500.0;
+const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
+const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 
 fn setup(
     mut commands: Commands,
@@ -26,25 +23,24 @@ fn setup(
         SpriteBundle {
             transform: Transform {
                 translation: Vec3::new(0.0, 0.0, 0.0),
-                scale: LILGUY_SIZE.extend(1.0),
+                scale: SNAKEHEAD_SIZE.extend(1.0),
                 ..default()
             },
             sprite: Sprite {
-                color: LILGUY_COLOR,
+                color: SNAKEHEAD_COLOR,
                 ..default()
             },
             ..default()
         },
-        LilGuy
+        SnakeHead
     ));
 }
 
 fn move_lilguy(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut Transform, With<LilGuy>>,
+    mut query: Query<&mut Transform, With<SnakeHead>>,
 ) {
     let mut lilguy_transform = query.single_mut();
-    let mut x_direction = 0.0;
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
         lilguy_transform.translation.x -= 10.0
