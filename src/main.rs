@@ -42,35 +42,23 @@ fn setup(
 fn move_lilguy(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Transform, With<LilGuy>>,
-    time: Res<Time>,
 ) {
     let mut lilguy_transform = query.single_mut();
     let mut x_direction = 0.0;
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        x_direction -= 1.0;
+        lilguy_transform.translation.x -= 10.0
     }
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        x_direction += 1.0;
+        lilguy_transform.translation.x += 10.0
     }
 
-    let mut lilguy_transform = query.single_mut();
-    let mut y_direction = 0.0;
-
     if keyboard_input.pressed(KeyCode::ArrowUp) {
-        y_direction -= 1.0;
+        lilguy_transform.translation.y += 10.0
     }
 
     if keyboard_input.pressed(KeyCode::ArrowDown) {
-        y_direction += 1.0;
+        lilguy_transform.translation.y -= 10.0
     }
-
-
-    // Calculate the new horizontal paddle position based on player input
-    let new_position =
-        lilguy_transform.translation.x + x_direction * LILGUY_SPEED * time.delta_seconds();
-
-    lilguy_transform.translation.x = new_position;
-    lilguy_transform.translation.y = lilguy_transform.translation.y.max(FLOOR_HEIGHT);
 }
