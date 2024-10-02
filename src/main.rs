@@ -32,10 +32,10 @@ fn main() {
 
 const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
-const MOVE_TIME: f32 = 0.01;
+const MOVE_TIME: f32 = 0.135;
 
-const ARENA_WIDTH: u32 = 100;
-const ARENA_HEIGHT: u32 = 100;
+const ARENA_WIDTH: u32 = 20;
+const ARENA_HEIGHT: u32 = 20;
 
 fn setup(
     mut commands: Commands,
