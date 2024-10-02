@@ -4,6 +4,9 @@ use bevy::{prelude::*};
 struct SnakeHead;
 
 #[derive(Component)]
+struct MoveCooldown(Timer);
+
+#[derive(Component)]
 enum Direction {
     Up,
     Left,
@@ -23,14 +26,15 @@ fn main() {
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate, change_direction_snakehead)
         .add_systems(FixedUpdate, map_position_to_transform)
+        .add_systems(FixedUpdate, move_snake)
         .run();
 }
 
 const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 
-const ARENA_WIDTH: u32 = 10;
-const ARENA_HEIGHT: u32 = 10;
+const ARENA_WIDTH: u32 = 100;
+const ARENA_HEIGHT: u32 = 100;
 
 fn setup(
     mut commands: Commands,
@@ -51,6 +55,7 @@ fn setup(
             ..default()
         },
         SnakeHead,
+        MoveCooldown(Timer::from_seconds(2.0, TimerMode::Once)),
         Position {
             x: 3,
             y: 3
@@ -70,6 +75,22 @@ fn map_position_to_transform(
 
         let y_increment = window.width() / ARENA_HEIGHT as f32;
         transform.translation.y = position.y as f32*y_increment;
+    }
+}
+
+fn move_snake(
+    time: Res<Time>,
+    mut query: Query<(&mut MoveCooldown, &mut Position, &mut Direction)>,
+) {
+    let (mut cooldown, mut position, mut direction) = query.single_mut();
+    if cooldown.0.tick(time.delta()).finished() {
+        match direction.as_mut() {
+            Direction::Right => position.x += 1,
+            Direction::Left => position.x -= 1,
+            Direction::Up => position.y += 1,
+            Direction::Down => position.y -= 1,
+        }
+        cooldown.0.reset()
     }
 }
 
