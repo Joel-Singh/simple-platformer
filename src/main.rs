@@ -55,7 +55,7 @@ fn setup(
             ..default()
         },
         SnakeHead,
-        MoveCooldown(Timer::from_seconds(2.0, TimerMode::Once)),
+        MoveCooldown(Timer::from_seconds(0.01, TimerMode::Once)),
         Position {
             x: 0,
             y: 0
