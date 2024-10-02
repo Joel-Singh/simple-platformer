@@ -32,6 +32,7 @@ fn main() {
 
 const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
+const MOVE_TIME: f32 = 0.01;
 
 const ARENA_WIDTH: u32 = 100;
 const ARENA_HEIGHT: u32 = 100;
@@ -55,7 +56,7 @@ fn setup(
             ..default()
         },
         SnakeHead,
-        MoveCooldown(Timer::from_seconds(0.01, TimerMode::Once)),
+        MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Once)),
         Position {
             x: 0,
             y: 0
