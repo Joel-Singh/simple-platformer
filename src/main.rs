@@ -1,19 +1,27 @@
-use bevy::prelude::*;
+use bevy::{prelude::*};
 
 #[derive(Component)]
 struct SnakeHead;
 
 #[derive(Component)]
+enum Direction {
+    Up,
+    Left,
+    Right,
+    Down
+}
+
+#[derive(Component)]
 struct Position {
     x: i32,
-    y: i32
+    y: i32,
 }
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup,  setup)
-        .add_systems(FixedUpdate, move_lilguy)
+        .add_systems(FixedUpdate, change_direction_snakehead)
         .add_systems(FixedUpdate, map_position_to_transform)
         .run();
 }
@@ -46,7 +54,8 @@ fn setup(
         Position {
             x: 3,
             y: 3
-        }
+        },
+        Direction::Up
     ));
 }
 
@@ -64,25 +73,25 @@ fn map_position_to_transform(
     }
 }
 
-fn move_lilguy(
+fn change_direction_snakehead(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut Position, With<SnakeHead>>,
+    mut query: Query<&mut Direction, With<SnakeHead>>,
 ) {
-    let mut lilguy_position = query.single_mut();
+    let mut snake_direction = query.single_mut();
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        lilguy_position.x -= 1;
+        *snake_direction = Direction::Left;
     }
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        lilguy_position.x += 1;
+        *snake_direction = Direction::Right;
     }
 
     if keyboard_input.pressed(KeyCode::ArrowUp) {
-        lilguy_position.y += 1;
+        *snake_direction = Direction::Up;
     }
 
     if keyboard_input.pressed(KeyCode::ArrowDown) {
-        lilguy_position.y -= 1;
+        *snake_direction = Direction::Down;
     }
 }
