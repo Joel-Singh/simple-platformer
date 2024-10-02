@@ -68,7 +68,7 @@ fn map_position_to_transform(
         let x_increment = window.width() / ARENA_WIDTH as f32;
         transform.translation.x = position.x as f32*x_increment;
 
-        let y_increment = window.width() / ARENA_WIDTH as f32;
+        let y_increment = window.width() / ARENA_HEIGHT as f32;
         transform.translation.y = position.y as f32*y_increment;
     }
 }
