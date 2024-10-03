@@ -26,7 +26,12 @@ fn main() {
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate, change_direction_snakehead)
         .add_systems(FixedUpdate, map_position_to_transform)
-        .add_systems(FixedUpdate, move_snake)
+        .add_systems(FixedUpdate,
+            (
+                move_snake,
+                remove_snake_if_off_screen
+            ).chain()
+        )
         .run();
 }
 
@@ -112,5 +117,16 @@ fn change_direction_snakehead(
 
     if keyboard_input.pressed(KeyCode::ArrowDown) {
         *snake_direction = Direction::Down;
+    }
+}
+
+fn remove_snake_if_off_screen(
+    mut query: Query<(&mut Position, Entity)>,
+    mut commands: Commands
+) {
+    let (position, entity) = query.single_mut();
+    if position.x > ARENA_WIDTH as i32 {
+        commands.entity(entity).despawn();
+        dbg!("Removed snake".to_string());
     }
 }
