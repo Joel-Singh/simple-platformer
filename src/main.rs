@@ -137,4 +137,12 @@ fn remove_snake_if_off_screen(
     if position.x > ARENA_END {
         commands.entity(entity).despawn();
     }
+
+    if position.y > ARENA_END {
+        commands.entity(entity).despawn();
+    }
+
+    if position.y < ARENA_BEGINNING {
+        commands.entity(entity).despawn();
+    }
 }
