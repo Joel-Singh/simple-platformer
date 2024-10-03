@@ -98,7 +98,6 @@ fn move_snake(
             Direction::Down => position.y -= 1,
         };
         cooldown.0.reset();
-        warn!("position x is {}", position.x);
     }
 }
 
