@@ -35,7 +35,7 @@ fn main() {
         .run();
 }
 
-const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
+const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 1.0, 1.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 const MOVE_TIME: f32 = 0.135;
 
