@@ -130,20 +130,13 @@ fn remove_snake_if_off_screen(
     mut commands: Commands
 ) {
     for (position, entity) in query.iter() {
-        if position.x < ARENA_BEGINNING {
-            commands.entity(entity).despawn();
-        }
-
-        if position.x > ARENA_END {
-            commands.entity(entity).despawn();
-        }
-
-        if position.y > ARENA_END {
-            commands.entity(entity).despawn();
-        }
-
-        if position.y < ARENA_BEGINNING {
-            commands.entity(entity).despawn();
+        let outside_bounds = 
+            position.x < ARENA_BEGINNING ||
+            position.x > ARENA_END ||
+            position.y > ARENA_END ||
+            position.y < ARENA_BEGINNING;
+        if outside_bounds {
+            commands.entity(entity).despawn()
         }
     }
 }
