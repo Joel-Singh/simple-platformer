@@ -1,4 +1,4 @@
-use bevy::{prelude::*};
+use bevy::prelude::*;
 
 #[derive(Component)]
 struct SnakeHead;
@@ -89,15 +89,16 @@ fn move_snake(
     time: Res<Time>,
     mut query: Query<(&mut MoveCooldown, &mut Position, &mut Direction)>,
 ) {
-    let (mut cooldown, mut position, mut direction) = query.single_mut();
-    if cooldown.0.tick(time.delta()).finished() {
-        match direction.as_mut() {
-            Direction::Right => position.x += 1,
-            Direction::Left => position.x -= 1,
-            Direction::Up => position.y += 1,
-            Direction::Down => position.y -= 1,
-        };
-        cooldown.0.reset();
+    for (mut cooldown, mut position, mut direction) in query.iter_mut() {
+        if cooldown.0.tick(time.delta()).finished() {
+            match direction.as_mut() {
+                Direction::Right => position.x += 1,
+                Direction::Left => position.x -= 1,
+                Direction::Up => position.y += 1,
+                Direction::Down => position.y -= 1,
+            };
+            cooldown.0.reset();
+        }
     }
 }
 
@@ -105,43 +106,44 @@ fn change_direction_snakehead(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Direction, With<SnakeHead>>,
 ) {
-    let mut snake_direction = query.single_mut();
+    for mut snake_direction in query.iter_mut() {
+        if keyboard_input.pressed(KeyCode::ArrowLeft) {
+            *snake_direction = Direction::Left;
+        }
 
-    if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        *snake_direction = Direction::Left;
-    }
+        if keyboard_input.pressed(KeyCode::ArrowRight) {
+            *snake_direction = Direction::Right;
+        }
 
-    if keyboard_input.pressed(KeyCode::ArrowRight) {
-        *snake_direction = Direction::Right;
-    }
+        if keyboard_input.pressed(KeyCode::ArrowUp) {
+            *snake_direction = Direction::Up;
+        }
 
-    if keyboard_input.pressed(KeyCode::ArrowUp) {
-        *snake_direction = Direction::Up;
-    }
-
-    if keyboard_input.pressed(KeyCode::ArrowDown) {
-        *snake_direction = Direction::Down;
+        if keyboard_input.pressed(KeyCode::ArrowDown) {
+            *snake_direction = Direction::Down;
+        }
     }
 }
 
 fn remove_snake_if_off_screen(
-    mut query: Query<(&mut Position, Entity)>,
+    query: Query<(&Position, Entity)>,
     mut commands: Commands
 ) {
-    let (position, entity) = query.single_mut();
-    if position.x < ARENA_BEGINNING {
-        commands.entity(entity).despawn();
-    }
+    for (position, entity) in query.iter() {
+        if position.x < ARENA_BEGINNING {
+            commands.entity(entity).despawn();
+        }
 
-    if position.x > ARENA_END {
-        commands.entity(entity).despawn();
-    }
+        if position.x > ARENA_END {
+            commands.entity(entity).despawn();
+        }
 
-    if position.y > ARENA_END {
-        commands.entity(entity).despawn();
-    }
+        if position.y > ARENA_END {
+            commands.entity(entity).despawn();
+        }
 
-    if position.y < ARENA_BEGINNING {
-        commands.entity(entity).despawn();
+        if position.y < ARENA_BEGINNING {
+            commands.entity(entity).despawn();
+        }
     }
 }
