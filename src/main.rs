@@ -39,8 +39,12 @@ const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 0.0, 0.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 const MOVE_TIME: f32 = 0.135;
 
-const ARENA_WIDTH: u32 = 20;
-const ARENA_HEIGHT: u32 = 20;
+const ARENA_WIDTH: i32 = 20;
+
+const ARENA_BEGINNING: i32 = -ARENA_WIDTH/2;
+const ARENA_END: i32 = ARENA_WIDTH/2;
+
+const ARENA_HEIGHT: i32 = 20;
 
 fn setup(
     mut commands: Commands,
@@ -94,6 +98,7 @@ fn move_snake(
             Direction::Down => position.y -= 1,
         };
         cooldown.0.reset();
+        warn!("position x is {}", position.x);
     }
 }
 
@@ -125,8 +130,11 @@ fn remove_snake_if_off_screen(
     mut commands: Commands
 ) {
     let (position, entity) = query.single_mut();
-    if position.x > ARENA_WIDTH as i32 {
+    if position.x < ARENA_BEGINNING {
         commands.entity(entity).despawn();
-        dbg!("Removed snake".to_string());
+    }
+
+    if position.x > ARENA_END {
+        commands.entity(entity).despawn();
     }
 }
