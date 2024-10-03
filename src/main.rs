@@ -93,7 +93,7 @@ fn move_snake(
             Direction::Up => position.y += 1,
             Direction::Down => position.y -= 1,
         }
-        cooldown.0.reset()
+        cooldown.0.reset();
     }
 }
 
