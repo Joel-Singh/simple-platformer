@@ -22,7 +22,12 @@ struct Position {
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(
+            bevy::log::LogPlugin {
+                level: bevy::log::Level::DEBUG,
+                ..default()
+            }
+        ))
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate, change_direction_snakehead)
         .add_systems(FixedUpdate, map_position_to_transform)
