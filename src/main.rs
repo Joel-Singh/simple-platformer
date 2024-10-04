@@ -56,6 +56,8 @@ const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 1.0, 1.0);
 const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 const MOVE_TIME: f32 = 0.135;
 
+const FRUIT_COLOR: Color = Color::linear_rgb(1.0, 0.0, 0.0);
+
 const ARENA_WIDTH: i32 = 20;
 const ARENA_HEIGHT: i32 = 20;
 
@@ -175,7 +177,7 @@ fn spawn_fruits(
                     ..default()
                 },
                 sprite: Sprite {
-                    color: SNAKEHEAD_COLOR,
+                    color: FRUIT_COLOR,
                     ..default()
                 },
                 ..default()
