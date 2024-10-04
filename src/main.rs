@@ -6,6 +6,12 @@ struct SnakeHead;
 #[derive(Component)]
 struct MoveCooldown(Timer);
 
+#[derive(Resource)]
+struct FruitSpawnTimer(Timer);
+
+#[derive(Component)]
+struct Fruit;
+
 #[derive(Component)]
 enum Direction {
     Up,
@@ -37,6 +43,12 @@ fn main() {
                 remove_snake_if_off_screen
             ).chain()
         )
+        .add_systems(FixedUpdate, spawn_fruits)
+        .insert_resource(
+            FruitSpawnTimer(
+                Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Once)
+            )
+        )
         .run();
 }
 
@@ -45,11 +57,12 @@ const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 const MOVE_TIME: f32 = 0.135;
 
 const ARENA_WIDTH: i32 = 20;
+const ARENA_HEIGHT: i32 = 20;
 
 const ARENA_BEGINNING: i32 = -ARENA_WIDTH/2;
 const ARENA_END: i32 = ARENA_WIDTH/2;
 
-const ARENA_HEIGHT: i32 = 20;
+const FRUIT_SPAWN_COOLDOWN: f32 =  2.0;
 
 fn setup(
     mut commands: Commands,
@@ -143,5 +156,31 @@ fn remove_snake_if_off_screen(
         if outside_bounds {
             commands.entity(entity).despawn()
         }
+    }
+}
+
+fn spawn_fruits(
+    mut commands: Commands,
+    mut fruit_timer: ResMut<FruitSpawnTimer>,
+    time: Res<Time>
+) {
+    fruit_timer.0.tick(time.delta());
+
+    if fruit_timer.0.finished() {
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform {
+                    translation: Vec3::new(0.0, 0.0, 0.0),
+                    scale: SNAKEHEAD_SIZE.extend(1.0),
+                    ..default()
+                },
+                sprite: Sprite {
+                    color: SNAKEHEAD_COLOR,
+                    ..default()
+                },
+                ..default()
+            },
+            Fruit
+        ));
     }
 }
