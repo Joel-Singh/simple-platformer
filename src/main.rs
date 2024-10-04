@@ -37,7 +37,7 @@ fn main() {
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate,
             (
-                change_direction_snakehead,
+                change_direction_on_input,
                 move_snake,
                 map_position_to_transform,
                 remove_snake_if_off_screen
@@ -122,7 +122,7 @@ fn move_snake(
     }
 }
 
-fn change_direction_snakehead(
+fn change_direction_on_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Direction, With<SnakeHead>>,
 ) {
