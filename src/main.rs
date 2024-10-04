@@ -35,11 +35,11 @@ fn main() {
             }
         ))
         .add_systems(Startup,  setup)
-        .add_systems(FixedUpdate, change_direction_snakehead)
-        .add_systems(FixedUpdate, map_position_to_transform)
         .add_systems(FixedUpdate,
             (
+                change_direction_snakehead,
                 move_snake,
+                map_position_to_transform,
                 remove_snake_if_off_screen
             ).chain()
         )
