@@ -181,10 +181,7 @@ fn spawn_fruits(
                 ..default()
             },
             Fruit,
-            Position {
-                x: 0,
-                y: 0
-            }
+            Position { x: 0, y: 0 }
         ));
     }
 }
