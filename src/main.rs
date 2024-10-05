@@ -171,7 +171,6 @@ fn spawn_fruits(
         commands.spawn((
             SpriteBundle {
                 transform: Transform {
-                    translation: Vec3::new(0.0, 0.0, 0.0),
                     scale: SNAKEHEAD_SIZE.extend(1.0),
                     ..default()
                 },
@@ -181,7 +180,11 @@ fn spawn_fruits(
                 },
                 ..default()
             },
-            Fruit
+            Fruit,
+            Position {
+                x: 0,
+                y: 0
+            }
         ));
     }
 }
