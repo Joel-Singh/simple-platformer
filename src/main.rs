@@ -39,11 +39,11 @@ fn main() {
             (
                 change_direction_on_input,
                 move_snake,
+                spawn_fruits,
                 map_position_to_transform,
                 remove_snake_if_off_screen
             ).chain()
         )
-        .add_systems(FixedUpdate, spawn_fruits)
         .insert_resource(
             FruitSpawnTimer(
                 Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Once)
