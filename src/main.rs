@@ -194,5 +194,6 @@ fn spawn_fruits(
             Fruit,
             random_position()
         ));
+        fruit_timer.0.reset();
     }
 }
