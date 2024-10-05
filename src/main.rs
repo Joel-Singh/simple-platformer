@@ -1,11 +1,11 @@
 use bevy::prelude::*;
+use rand::Rng;
 
 #[derive(Component)]
 struct SnakeHead;
 
 #[derive(Component)]
 struct MoveCooldown(Timer);
-
 #[derive(Resource)]
 struct FruitSpawnTimer(Timer);
 
@@ -63,6 +63,9 @@ const ARENA_HEIGHT: i32 = 20;
 
 const ARENA_BEGINNING: i32 = -ARENA_WIDTH/2;
 const ARENA_END: i32 = ARENA_WIDTH/2;
+
+const ARENA_TOP: i32 = ARENA_HEIGHT/2;
+const ARENA_BOTTOM: i32 = -ARENA_HEIGHT/2;
 
 const FRUIT_SPAWN_COOLDOWN: f32 =  2.0;
 
@@ -165,6 +168,14 @@ fn spawn_fruits(
     mut fruit_timer: ResMut<FruitSpawnTimer>,
     time: Res<Time>
 ) {
+    fn random_position() -> Position {
+        let mut rng = rand::thread_rng();
+        return Position {
+            x: rng.gen_range(ARENA_BEGINNING..ARENA_END + 1),
+            y: rng.gen_range(ARENA_BOTTOM..ARENA_TOP + 1)
+        }
+    }
+
     fruit_timer.0.tick(time.delta());
 
     if fruit_timer.0.finished() {
@@ -181,7 +192,7 @@ fn spawn_fruits(
                 ..default()
             },
             Fruit,
-            Position { x: 0, y: 0 }
+            random_position()
         ));
     }
 }
