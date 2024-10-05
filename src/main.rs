@@ -53,7 +53,7 @@ fn main() {
 }
 
 const SNAKEHEAD_COLOR: Color =  Color::srgb(1.0, 1.0, 1.0);
-const SNAKEHEAD_SIZE: Vec2 = Vec2::new(20.0, 20.0);
+const SPRITE_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 const MOVE_TIME: f32 = 0.135;
 
 const FRUIT_COLOR: Color = Color::linear_rgb(1.0, 0.0, 0.0);
@@ -77,7 +77,7 @@ fn setup(
     commands.spawn((
         SpriteBundle {
             transform: Transform {
-                scale: SNAKEHEAD_SIZE.extend(1.0),
+                scale: SPRITE_SIZE.extend(1.0),
                 ..default()
             },
             sprite: Sprite {
@@ -182,7 +182,7 @@ fn spawn_fruits(
         commands.spawn((
             SpriteBundle {
                 transform: Transform {
-                    scale: SNAKEHEAD_SIZE.extend(1.0),
+                    scale: SPRITE_SIZE.extend(1.0),
                     ..default()
                 },
                 sprite: Sprite {
