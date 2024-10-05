@@ -129,19 +129,19 @@ fn change_direction_on_input(
     mut query: Query<&mut Direction, With<SnakeHead>>,
 ) {
     for mut snake_direction in query.iter_mut() {
-        if keyboard_input.pressed(KeyCode::ArrowLeft) {
+        if keyboard_input.pressed(KeyCode::ArrowLeft) || keyboard_input.pressed(KeyCode::KeyA) {
             *snake_direction = Direction::Left;
         }
 
-        if keyboard_input.pressed(KeyCode::ArrowRight) {
+        if keyboard_input.pressed(KeyCode::ArrowRight) || keyboard_input.pressed(KeyCode::KeyD) {
             *snake_direction = Direction::Right;
         }
 
-        if keyboard_input.pressed(KeyCode::ArrowUp) {
+        if keyboard_input.pressed(KeyCode::ArrowUp) || keyboard_input.pressed(KeyCode::KeyW) {
             *snake_direction = Direction::Up;
         }
 
-        if keyboard_input.pressed(KeyCode::ArrowDown) {
+        if keyboard_input.pressed(KeyCode::ArrowDown) || keyboard_input.pressed(KeyCode::KeyS) {
             *snake_direction = Direction::Down;
         }
     }
