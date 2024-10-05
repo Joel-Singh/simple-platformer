@@ -74,7 +74,6 @@ fn setup(
     commands.spawn((
         SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 0.0),
                 scale: SNAKEHEAD_SIZE.extend(1.0),
                 ..default()
             },
