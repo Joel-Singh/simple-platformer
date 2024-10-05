@@ -41,7 +41,8 @@ fn main() {
                 move_snake,
                 spawn_fruits,
                 map_position_to_transform,
-                remove_snake_if_off_screen
+                remove_snake_if_off_screen,
+                handle_snake_fruit_collisions
             ).chain()
         )
         .insert_resource(
@@ -143,6 +144,19 @@ fn change_direction_on_input(
 
         if keyboard_input.pressed(KeyCode::ArrowDown) || keyboard_input.pressed(KeyCode::KeyS) {
             *snake_direction = Direction::Down;
+        }
+    }
+}
+
+fn handle_snake_fruit_collisions(
+    snake_pos: Query<&Position, With<SnakeHead>>,
+    fruits_pos: Query<(&Position, Entity), With<Fruit>>,
+    mut commands: Commands
+) {
+    let snake_pos = snake_pos.get_single();
+    for (fruits_pos, fruit) in fruits_pos.iter() {
+        if fruits_pos.x == snake_pos.as_ref().unwrap().x && fruits_pos.y == snake_pos.as_ref().unwrap().y {
+            commands.entity(fruit).despawn();
         }
     }
 }
