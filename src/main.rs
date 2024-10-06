@@ -48,7 +48,7 @@ fn main() {
         )
         .insert_resource(
             FruitSpawnTimer(
-                Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Once)
+                Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Repeating)
             )
         )
         .run();
@@ -89,7 +89,7 @@ fn setup(
             ..default()
         },
         SnakeHead,
-        MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Once)),
+        MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
         Position { x: 0, y: 0 },
         Direction::Up
     ));
@@ -121,7 +121,6 @@ fn move_snake(
                 Direction::Up => position.y += 1,
                 Direction::Down => position.y -= 1,
             };
-            cooldown.0.reset();
         }
     }
 }
@@ -191,9 +190,7 @@ fn spawn_fruits(
         }
     }
 
-    fruit_timer.0.tick(time.delta());
-
-    if fruit_timer.0.finished() {
+    if fruit_timer.0.tick(time.delta()).finished() {
         commands.spawn((
             SpriteBundle {
                 transform: Transform {
@@ -209,6 +206,5 @@ fn spawn_fruits(
             Fruit,
             random_position()
         ));
-        fruit_timer.0.reset();
     }
 }
