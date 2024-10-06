@@ -6,6 +6,7 @@ struct SnakeHead;
 
 #[derive(Component)]
 struct MoveCooldown(Timer);
+
 #[derive(Resource)]
 struct FruitSpawnTimer(Timer);
 
