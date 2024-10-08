@@ -61,7 +61,7 @@ fn main() {
             (
                 tick_move_cooldown,
                 change_direction_on_input,
-                move_snake.run_if(ready_to_move),
+                move_snake_and_snake_bodies.run_if(ready_to_move),
                 spawn_fruits,
                 map_position_to_transform,
                 remove_snake_if_off_screen,
@@ -137,7 +137,7 @@ fn map_position_to_transform(
     }
 }
 
-fn move_snake(
+fn move_snake_and_snake_bodies(
     mut query: Query<(&mut Position, &mut Direction)>,
 ) {
     for (mut position, mut direction) in query.iter_mut() {
