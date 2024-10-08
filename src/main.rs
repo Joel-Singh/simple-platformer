@@ -42,6 +42,12 @@ fn tick_move_cooldown(
     move_cooldown.0.tick(time.delta());
 }
 
+fn ready_to_move(
+    move_cooldown: Res<MoveCooldown>
+) -> bool {
+    move_cooldown.0.finished()
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(
@@ -55,7 +61,7 @@ fn main() {
             (
                 tick_move_cooldown,
                 change_direction_on_input,
-                move_snake,
+                move_snake.run_if(ready_to_move),
                 spawn_fruits,
                 map_position_to_transform,
                 remove_snake_if_off_screen,
@@ -132,18 +138,15 @@ fn map_position_to_transform(
 }
 
 fn move_snake(
-    move_cooldown: Res<MoveCooldown>,
     mut query: Query<(&mut Position, &mut Direction)>,
 ) {
-    if move_cooldown.0.finished() {
-        for (mut position, mut direction) in query.iter_mut() {
-            match direction.as_mut() {
-                Direction::Right => position.x += 1,
-                Direction::Left => position.x -= 1,
-                Direction::Up => position.y += 1,
-                Direction::Down => position.y -= 1,
-            };
-        }
+    for (mut position, mut direction) in query.iter_mut() {
+        match direction.as_mut() {
+            Direction::Right => position.x += 1,
+            Direction::Left => position.x -= 1,
+            Direction::Up => position.y += 1,
+            Direction::Down => position.y -= 1,
+        };
     }
 }
 
