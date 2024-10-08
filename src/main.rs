@@ -35,18 +35,6 @@ struct Position {
     y: i32,
 }
 
-fn tick_move_cooldown(
-    time: Res<Time>,
-    mut move_cooldown: ResMut<MoveCooldown>
-) {
-    move_cooldown.0.tick(time.delta());
-}
-
-fn ready_to_move(
-    move_cooldown: Res<MoveCooldown>
-) -> bool {
-    move_cooldown.0.finished()
-}
 
 fn main() {
     App::new()
@@ -121,6 +109,19 @@ fn setup(
         Position { x: 0, y: 0 },
         Direction::Up
     ));
+}
+
+fn tick_move_cooldown(
+    time: Res<Time>,
+    mut move_cooldown: ResMut<MoveCooldown>
+) {
+    move_cooldown.0.tick(time.delta());
+}
+
+fn ready_to_move(
+    move_cooldown: Res<MoveCooldown>
+) -> bool {
+    move_cooldown.0.finished()
 }
 
 fn map_position_to_transform(
