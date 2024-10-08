@@ -2,7 +2,15 @@ use bevy::prelude::*;
 use rand::Rng;
 
 #[derive(Component)]
-struct SnakeHead;
+struct SnakeBody;
+
+#[derive(Component)]
+struct SnakeHead {
+    body: Vec<Entity>
+}
+
+#[derive(Event)]
+struct FruitEaten;
 
 #[derive(Component)]
 struct MoveCooldown(Timer);
@@ -43,9 +51,11 @@ fn main() {
                 spawn_fruits,
                 map_position_to_transform,
                 remove_snake_if_off_screen,
-                handle_snake_fruit_collisions
+                handle_snake_fruit_collisions,
+                add_snake_body_on_fruit_eaten
             ).chain()
         )
+        .add_event::<FruitEaten>()
         .insert_resource(
             FruitSpawnTimer(
                 Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Repeating)
@@ -88,7 +98,9 @@ fn setup(
             },
             ..default()
         },
-        SnakeHead,
+        SnakeHead {
+            body: vec![]
+        },
         MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
         Position { x: 0, y: 0 },
         Direction::Up
@@ -151,13 +163,42 @@ fn change_direction_on_input(
 fn handle_snake_fruit_collisions(
     snake_pos: Query<&Position, With<SnakeHead>>,
     fruits_pos: Query<(&Position, Entity), With<Fruit>>,
+    mut ev_fruit_eaten: EventWriter<FruitEaten>,
     mut commands: Commands
 ) {
     let snake_pos = snake_pos.get_single();
     for (fruits_pos, fruit) in fruits_pos.iter() {
         if fruits_pos.x == snake_pos.as_ref().unwrap().x && fruits_pos.y == snake_pos.as_ref().unwrap().y {
             commands.entity(fruit).despawn();
+            ev_fruit_eaten.send(FruitEaten);
         }
+    }
+}
+
+fn add_snake_body_on_fruit_eaten (
+    mut ev_fruit_eaten: EventReader<FruitEaten>,
+    mut commands: Commands,
+    mut snake_head: Query<&mut SnakeHead>
+) {
+    for _ in ev_fruit_eaten.read() {
+        let mut snakehead = snake_head.get_single_mut().unwrap();
+        let spawned_body = commands.spawn((
+            SpriteBundle {
+                transform: Transform {
+                    scale: SPRITE_SIZE.extend(1.0),
+                    ..default()
+                },
+                sprite: Sprite {
+                    color: SNAKEHEAD_COLOR,
+                    ..default()
+                },
+                ..default()
+            },
+            SnakeBody,
+            Position {x: 0, y: 0}
+        ));
+
+        snakehead.body.push(spawned_body.id());
     }
 }
 
