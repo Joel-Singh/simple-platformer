@@ -12,7 +12,7 @@ struct SnakeHead {
 #[derive(Event)]
 struct FruitEaten;
 
-#[derive(Component)]
+#[derive(Resource)]
 struct MoveCooldown(Timer);
 
 #[derive(Resource)]
@@ -35,6 +35,13 @@ struct Position {
     y: i32,
 }
 
+fn tick_move_cooldown(
+    time: Res<Time>,
+    mut move_cooldown: ResMut<MoveCooldown>
+) {
+    move_cooldown.0.tick(time.delta());
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(
@@ -46,6 +53,7 @@ fn main() {
         .add_systems(Startup,  setup)
         .add_systems(FixedUpdate,
             (
+                tick_move_cooldown,
                 change_direction_on_input,
                 move_snake,
                 spawn_fruits,
@@ -60,6 +68,9 @@ fn main() {
             FruitSpawnTimer(
                 Timer::from_seconds(FRUIT_SPAWN_COOLDOWN, TimerMode::Repeating)
             )
+        )
+        .insert_resource(
+            MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
         )
         .run();
 }
@@ -101,7 +112,6 @@ fn setup(
         SnakeHead {
             body: vec![]
         },
-        MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
         Position { x: 0, y: 0 },
         Direction::Up
     ));
@@ -122,11 +132,11 @@ fn map_position_to_transform(
 }
 
 fn move_snake(
-    time: Res<Time>,
-    mut query: Query<(&mut MoveCooldown, &mut Position, &mut Direction)>,
+    move_cooldown: Res<MoveCooldown>,
+    mut query: Query<(&mut Position, &mut Direction)>,
 ) {
-    for (mut cooldown, mut position, mut direction) in query.iter_mut() {
-        if cooldown.0.tick(time.delta()).finished() {
+    if move_cooldown.0.finished() {
+        for (mut position, mut direction) in query.iter_mut() {
             match direction.as_mut() {
                 Direction::Right => position.x += 1,
                 Direction::Left => position.x -= 1,
@@ -195,7 +205,6 @@ fn add_snake_body_on_fruit_eaten (
                 ..default()
             },
             SnakeBody,
-            MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
             Direction::Up,
             Position {x: 0, y: 0}
         ));
