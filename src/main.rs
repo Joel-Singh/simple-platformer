@@ -240,7 +240,7 @@ fn spawn_fruits(
 ) {
     fn random_position() -> Position {
         let mut rng = rand::thread_rng();
-        return Position {
+        Position {
             x: rng.gen_range(ARENA_BEGINNING..ARENA_END + 1),
             y: rng.gen_range(ARENA_BOTTOM..ARENA_TOP + 1)
         }
