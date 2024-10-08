@@ -195,6 +195,8 @@ fn add_snake_body_on_fruit_eaten (
                 ..default()
             },
             SnakeBody,
+            MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
+            Direction::Up,
             Position {x: 0, y: 0}
         ));
 
