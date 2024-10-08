@@ -21,7 +21,7 @@ struct FruitSpawnTimer(Timer);
 #[derive(Component)]
 struct Fruit;
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 enum Direction {
     Up,
     Left,
@@ -49,6 +49,7 @@ fn main() {
             (
                 tick_move_cooldown,
                 change_direction_on_input,
+                change_snake_body_direction,
                 move_snake_and_snake_bodies.run_if(ready_to_move),
                 spawn_fruits,
                 map_position_to_transform,
@@ -186,6 +187,16 @@ fn handle_snake_fruit_collisions(
             commands.entity(fruit).despawn();
             ev_fruit_eaten.send(FruitEaten);
         }
+    }
+}
+
+fn change_snake_body_direction(
+    mut body_direction_query: Query<&mut Direction, With<SnakeBody>>,
+    mut head_direction_query: Query<&mut Direction, (With<SnakeHead>, Without<SnakeBody>)>,
+) {
+    for mut body_direction in body_direction_query.iter_mut() {
+        let head_direction = *head_direction_query.get_single_mut().unwrap();
+        *body_direction = head_direction;
     }
 }
 
