@@ -203,10 +203,10 @@ fn change_snake_body_direction(
 fn add_snake_body_on_fruit_eaten (
     mut ev_fruit_eaten: EventReader<FruitEaten>,
     mut commands: Commands,
-    mut snake_head: Query<&mut SnakeHead>
+    mut snake_head: Query<(&mut SnakeHead, &Direction, &Position)>
 ) {
     for _ in ev_fruit_eaten.read() {
-        let mut snakehead = snake_head.get_single_mut().unwrap();
+        let (mut snakehead, direction, position) = snake_head.get_single_mut().unwrap();
         let spawned_body = commands.spawn((
             SpriteBundle {
                 transform: Transform {
@@ -220,15 +220,15 @@ fn add_snake_body_on_fruit_eaten (
                 ..default()
             },
             SnakeBody,
-            Direction::Up,
-            Position {x: 0, y: 0}
+            *direction,
+            position_behind(direction, position)
         ));
 
         snakehead.body.push(spawned_body.id());
     }
 }
 
-fn position_behind(direction: Direction, position: Position) -> Position {
+fn position_behind(direction: &Direction, position: &Position) -> Position {
     match direction {
         Direction::Up => Position {
             x: position.x,
