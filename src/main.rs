@@ -228,6 +228,27 @@ fn add_snake_body_on_fruit_eaten (
     }
 }
 
+fn position_behind(direction: Direction, position: Position) -> Position {
+    match direction {
+        Direction::Up => Position {
+            x: position.x,
+            y: position.y - 1
+        },
+        Direction::Down => Position {
+            x: position.x,
+            y: position.y + 1
+        },
+        Direction::Left => Position {
+            x: position.x + 1,
+            y: position.y
+        },
+        Direction::Right => Position {
+            x: position.x - 1,
+            y: position.y
+        }
+    }
+}
+
 fn remove_snake_if_off_screen(
     query: Query<(&Position, Entity)>,
     mut commands: Commands
