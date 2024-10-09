@@ -35,6 +35,10 @@ struct Position {
     y: i32,
 }
 
+fn create_position(x: i32, y: i32) -> Position {
+    Position { x, y }
+}
+
 
 fn main() {
     App::new()
@@ -107,7 +111,7 @@ fn setup(
         SnakeHead {
             body: vec![]
         },
-        Position { x: 0, y: 0 },
+        create_position(0, 0),
         Direction::Up
     ));
 }
@@ -230,22 +234,10 @@ fn add_snake_body_on_fruit_eaten (
 
 fn position_behind(direction: &Direction, position: &Position) -> Position {
     match direction {
-        Direction::Up => Position {
-            x: position.x,
-            y: position.y - 1
-        },
-        Direction::Down => Position {
-            x: position.x,
-            y: position.y + 1
-        },
-        Direction::Left => Position {
-            x: position.x + 1,
-            y: position.y
-        },
-        Direction::Right => Position {
-            x: position.x - 1,
-            y: position.y
-        }
+        Direction::Up => create_position(position.x, position.y - 1),
+        Direction::Down => create_position(position.x, position.y + 1 ),
+        Direction::Left => create_position(position.x + 1, position.y ),
+        Direction::Right => create_position(position.x - 1, position.y )
     }
 }
 
