@@ -10,9 +10,6 @@ struct Tail;
 #[derive(Component)]
 struct SnakeHead;
 
-#[derive(Component)]
-struct BodyInfront(Entity);
-
 #[derive(Bundle)]
 struct SnakeSpriteBundle {
     sprite_bundle: SpriteBundle    
@@ -240,7 +237,6 @@ fn add_snake_body_on_fruit_eaten (
             SnakeBody,
             *tail_direction,
             position_behind(tail_direction, tail_position),
-            BodyInfront(tail)
         ));
 
         spawned_body.insert(Tail);
