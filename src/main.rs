@@ -10,6 +10,29 @@ struct Tail;
 #[derive(Component)]
 struct SnakeHead;
 
+#[derive(Bundle)]
+struct SnakeSpriteBundle {
+    sprite_bundle: SpriteBundle    
+}
+
+impl Default for SnakeSpriteBundle {
+    fn default() -> Self {
+        Self {
+            sprite_bundle: SpriteBundle {
+                transform: Transform {
+                    scale: SPRITE_SIZE.extend(1.0),
+                    ..default()
+                },
+                sprite: Sprite {
+                    color: SNAKEHEAD_COLOR,
+                    ..default()
+                },
+                ..default()
+            },
+        }
+    }
+}
+
 #[derive(Event)]
 struct FruitEaten;
 
@@ -98,17 +121,7 @@ fn setup(
     commands.spawn(Camera2dBundle::default());
     
     commands.spawn((
-        SpriteBundle {
-            transform: Transform {
-                scale: SPRITE_SIZE.extend(1.0),
-                ..default()
-            },
-            sprite: Sprite {
-                color: SNAKEHEAD_COLOR,
-                ..default()
-            },
-            ..default()
-        },
+        SnakeSpriteBundle::default(),
         SnakeHead,
         Tail,
         create_position(0, 0),
@@ -212,17 +225,7 @@ fn add_snake_body_on_fruit_eaten (
     for _ in ev_fruit_eaten.read() {
         let (tail, tail_direction, tail_position) = tail_query.get_single_mut().unwrap();
         let mut spawned_body = commands.spawn((
-            SpriteBundle {
-                transform: Transform {
-                    scale: SPRITE_SIZE.extend(1.0),
-                    ..default()
-                },
-                sprite: Sprite {
-                    color: SNAKEHEAD_COLOR,
-                    ..default()
-                },
-                ..default()
-            },
+            SnakeSpriteBundle::default(),
             SnakeBody,
             *tail_direction,
             position_behind(tail_direction, tail_position)
