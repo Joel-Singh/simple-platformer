@@ -5,9 +5,10 @@ use rand::Rng;
 struct SnakeBody;
 
 #[derive(Component)]
-struct SnakeHead {
-    body: Vec<Entity>
-}
+struct Tail;
+
+#[derive(Component)]
+struct SnakeHead;
 
 #[derive(Event)]
 struct FruitEaten;
@@ -108,9 +109,8 @@ fn setup(
             },
             ..default()
         },
-        SnakeHead {
-            body: vec![]
-        },
+        SnakeHead,
+        Tail,
         create_position(0, 0),
         Direction::Up
     ));
@@ -207,11 +207,11 @@ fn change_snake_body_direction(
 fn add_snake_body_on_fruit_eaten (
     mut ev_fruit_eaten: EventReader<FruitEaten>,
     mut commands: Commands,
-    mut snake_head: Query<(&mut SnakeHead, &Direction, &Position)>
+    mut tail_query: Query<(Entity, &Direction, &Position), With<Tail>>
 ) {
     for _ in ev_fruit_eaten.read() {
-        let (mut snakehead, direction, position) = snake_head.get_single_mut().unwrap();
-        let spawned_body = commands.spawn((
+        let (tail, tail_direction, tail_position) = tail_query.get_single_mut().unwrap();
+        let mut spawned_body = commands.spawn((
             SpriteBundle {
                 transform: Transform {
                     scale: SPRITE_SIZE.extend(1.0),
@@ -224,11 +224,12 @@ fn add_snake_body_on_fruit_eaten (
                 ..default()
             },
             SnakeBody,
-            *direction,
-            position_behind(direction, position)
+            *tail_direction,
+            position_behind(tail_direction, tail_position)
         ));
 
-        snakehead.body.push(spawned_body.id());
+        spawned_body.insert(Tail);
+        commands.get_entity(tail).unwrap().remove::<Tail>();
     }
 }
 
