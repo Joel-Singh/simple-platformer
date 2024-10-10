@@ -10,6 +10,9 @@ struct Tail;
 #[derive(Component)]
 struct SnakeHead;
 
+#[derive(Component)]
+struct BodyInfront(Entity);
+
 #[derive(Bundle)]
 struct SnakeSpriteBundle {
     sprite_bundle: SpriteBundle    
@@ -78,6 +81,7 @@ fn main() {
                 tick_move_cooldown,
                 change_direction_on_input,
                 change_snake_body_direction,
+                move_snakehead.run_if(ready_to_move),
                 move_snake_and_snake_bodies.run_if(ready_to_move),
                 spawn_fruits,
                 map_position_to_transform,
@@ -156,8 +160,15 @@ fn map_position_to_transform(
     }
 }
 
+fn move_snakehead(
+    mut query: Query<(&mut Position, &Direction), With<SnakeHead>>,
+) {
+    let (mut position, direction) = query.get_single_mut().unwrap();
+    *position = position_infront(&direction, &position)
+}
+
 fn move_snake_and_snake_bodies(
-    mut query: Query<(&mut Position, &mut Direction)>,
+    mut query: Query<(&mut Position, &mut Direction), Without<SnakeHead>>,
 ) {
     for (mut position, mut direction) in query.iter_mut() {
         match direction.as_mut() {
@@ -228,7 +239,8 @@ fn add_snake_body_on_fruit_eaten (
             SnakeSpriteBundle::default(),
             SnakeBody,
             *tail_direction,
-            position_behind(tail_direction, tail_position)
+            position_behind(tail_direction, tail_position),
+            BodyInfront(tail)
         ));
 
         spawned_body.insert(Tail);
@@ -242,6 +254,15 @@ fn position_behind(direction: &Direction, position: &Position) -> Position {
         Direction::Down => create_position(position.x, position.y + 1 ),
         Direction::Left => create_position(position.x + 1, position.y ),
         Direction::Right => create_position(position.x - 1, position.y )
+    }
+}
+
+fn position_infront(direction: &Direction, position: &Position) -> Position {
+    match direction {
+        Direction::Up => create_position(position.x, position.y + 1),
+        Direction::Down => create_position(position.x, position.y - 1 ),
+        Direction::Left => create_position(position.x - 1, position.y ),
+        Direction::Right => create_position(position.x + 1, position.y )
     }
 }
 
