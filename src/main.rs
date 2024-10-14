@@ -5,10 +5,10 @@ use rand::Rng;
 struct SnakeBody;
 
 #[derive(Component)]
-struct Tail;
-
-#[derive(Component)]
 struct SnakeHead;
+
+#[derive(Resource)]
+struct SnakeBodyVec(Vec<Entity>);
 
 #[derive(Bundle)]
 struct SnakeSpriteBundle {
@@ -96,6 +96,9 @@ fn main() {
         .insert_resource(
             MoveCooldown(Timer::from_seconds(MOVE_TIME, TimerMode::Repeating)),
         )
+        .insert_resource(
+           SnakeBodyVec(Vec::new())
+        )
         .run();
 }
 
@@ -118,16 +121,18 @@ const FRUIT_SPAWN_COOLDOWN: f32 =  2.0;
 
 fn setup(
     mut commands: Commands,
+    mut body_vec: ResMut<SnakeBodyVec>
 ) {
     commands.spawn(Camera2dBundle::default());
     
-    commands.spawn((
+    let snake_head = commands.spawn((
         SnakeSpriteBundle::default(),
         SnakeHead,
-        Tail,
         create_position(0, 0),
         Direction::Up
     ));
+
+    body_vec.0.push(snake_head.id())
 }
 
 fn tick_move_cooldown(
@@ -228,19 +233,20 @@ fn change_snake_body_direction(
 fn add_snake_body_on_fruit_eaten (
     mut ev_fruit_eaten: EventReader<FruitEaten>,
     mut commands: Commands,
-    mut tail_query: Query<(Entity, &Direction, &Position), With<Tail>>
+    body_query: Query<(&Direction, &Position)>,
+    mut body_vec: ResMut<SnakeBodyVec>
 ) {
     for _ in ev_fruit_eaten.read() {
-        let (tail, tail_direction, tail_position) = tail_query.get_single_mut().unwrap();
-        let mut spawned_body = commands.spawn((
+        let last_entity = *body_vec.0.last().unwrap();
+        let (tail_direction, tail_position) = body_query.get(last_entity).unwrap();
+        let spawned_body = commands.spawn((
             SnakeSpriteBundle::default(),
             SnakeBody,
             *tail_direction,
             position_behind(tail_direction, tail_position),
         ));
 
-        spawned_body.insert(Tail);
-        commands.get_entity(tail).unwrap().remove::<Tail>();
+        body_vec.0.push(spawned_body.id());
     }
 }
 
