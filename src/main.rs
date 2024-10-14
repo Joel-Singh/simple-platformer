@@ -169,12 +169,12 @@ fn move_snakehead(
 
 fn move_snake_bodies(
     body_vec: ResMut<SnakeBodyVec>,
-    mut query_bodies: Query<(&mut Direction, &mut Position, Entity)>,
+    mut query_bodies: Query<(&mut Direction, &mut Position)>,
 ) {
     for n in 0..body_vec.0.len() {
         let current_body: Entity = body_vec.0[n];
 
-        let (direction, mut position, _) = query_bodies.get_mut(current_body).unwrap();
+        let (direction, mut position) = query_bodies.get_mut(current_body).unwrap();
         *position = position_infront(&direction, &position);
     }
 }
