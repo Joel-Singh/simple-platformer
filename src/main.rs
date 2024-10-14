@@ -77,9 +77,7 @@ fn main() {
             (
                 tick_move_cooldown,
                 change_direction_on_input,
-                change_snake_body_direction,
-                move_snakehead.run_if(ready_to_move),
-                move_snake_and_snake_bodies.run_if(ready_to_move),
+                move_snake_bodies.run_if(ready_to_move),
                 spawn_fruits,
                 map_position_to_transform,
                 remove_snake_if_off_screen,
@@ -169,16 +167,15 @@ fn move_snakehead(
     *position = position_infront(&direction, &position)
 }
 
-fn move_snake_and_snake_bodies(
-    mut query: Query<(&mut Position, &mut Direction), Without<SnakeHead>>,
+fn move_snake_bodies(
+    body_vec: ResMut<SnakeBodyVec>,
+    mut query_bodies: Query<(&mut Direction, &mut Position, Entity)>,
 ) {
-    for (mut position, mut direction) in query.iter_mut() {
-        match direction.as_mut() {
-            Direction::Right => position.x += 1,
-            Direction::Left => position.x -= 1,
-            Direction::Up => position.y += 1,
-            Direction::Down => position.y -= 1,
-        };
+    for n in 0..body_vec.0.len() {
+        let current_body: Entity = body_vec.0[n];
+
+        let (direction, mut position, _) = query_bodies.get_mut(current_body).unwrap();
+        *position = position_infront(&direction, &position);
     }
 }
 
