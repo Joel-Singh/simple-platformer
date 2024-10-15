@@ -79,10 +79,11 @@ fn main() {
                 change_direction_on_input,
                 move_snake_bodies.run_if(ready_to_move),
                 spawn_fruits,
+                handle_snake_fruit_collisions,
+                add_snake_body_on_fruit_eaten,
+                change_snake_body_directions.run_if(ready_to_move),
                 map_position_to_transform,
                 remove_snake_if_off_screen,
-                handle_snake_fruit_collisions,
-                add_snake_body_on_fruit_eaten
             ).chain()
         )
         .add_event::<FruitEaten>()
@@ -168,6 +169,16 @@ fn move_snake_bodies(
     }
 }
 
+fn change_snake_body_directions(
+    mut query_bodies: Query<&mut Direction>,
+    body_vec: Res<SnakeBodyVec>
+) {
+    for n in 0..(body_vec.0.len() - 1) {
+        let [mut current, ahead] = query_bodies.get_many_mut([body_vec.0[n], body_vec.0[n + 1]]).unwrap();
+        *current = *ahead;
+    }
+}
+
 fn change_direction_on_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Direction, With<SnakeHead>>,
@@ -213,8 +224,8 @@ fn add_snake_body_on_fruit_eaten (
     mut body_vec: ResMut<SnakeBodyVec>
 ) {
     for _ in ev_fruit_eaten.read() {
-        let last_entity = *body_vec.0.last().unwrap();
-        let (tail_direction, tail_position) = body_query.get(last_entity).unwrap();
+        let tail = *body_vec.0.first().unwrap();
+        let (tail_direction, tail_position) = body_query.get(tail).unwrap();
         let spawned_body = commands.spawn((
             SnakeSpriteBundle::default(),
             SnakeBody,
@@ -222,7 +233,7 @@ fn add_snake_body_on_fruit_eaten (
             position_behind(tail_direction, tail_position),
         ));
 
-        body_vec.0.push(spawned_body.id());
+        body_vec.0.insert(0, spawned_body.id());
     }
 }
 
