@@ -83,7 +83,6 @@ fn main() {
                 add_snake_body_on_fruit_eaten,
                 change_snake_body_directions.run_if(ready_to_move),
                 map_position_to_transform,
-                remove_snake_if_off_screen,
             ).chain()
         )
         .add_event::<FruitEaten>()
@@ -252,22 +251,6 @@ fn position_infront(direction: &Direction, position: &Position) -> Position {
         Direction::Down => create_position(position.x, position.y - 1 ),
         Direction::Left => create_position(position.x - 1, position.y ),
         Direction::Right => create_position(position.x + 1, position.y )
-    }
-}
-
-fn remove_snake_if_off_screen(
-    query: Query<(&Position, Entity)>,
-    mut commands: Commands
-) {
-    for (position, entity) in query.iter() {
-        let outside_bounds = 
-            position.x < ARENA_BEGINNING ||
-            position.x > ARENA_END ||
-            position.y > ARENA_END ||
-            position.y < ARENA_BEGINNING;
-        if outside_bounds {
-            commands.entity(entity).despawn()
-        }
     }
 }
 
