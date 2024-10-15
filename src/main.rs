@@ -257,13 +257,29 @@ fn position_infront(direction: &Direction, position: &Position) -> Position {
 fn spawn_fruits(
     mut commands: Commands,
     mut fruit_timer: ResMut<FruitSpawnTimer>,
+    positions: Query<&Position>,
     time: Res<Time>
 ) {
-    fn random_position() -> Position {
+    fn get_random_position() -> Position {
         let mut rng = rand::thread_rng();
         Position {
             x: rng.gen_range(ARENA_BEGINNING..ARENA_END + 1),
             y: rng.gen_range(ARENA_BOTTOM..ARENA_TOP + 1)
+        }
+    }
+
+    let mut random_position: Position;
+    loop {
+        random_position = get_random_position();
+        let mut random_position_overlaps = false;
+        for position in positions.iter() {
+            if position.x == random_position.x && position.y == random_position.y {
+                random_position_overlaps = true;
+                break;
+            }
+        }
+        if !random_position_overlaps {
+            break;
         }
     }
 
@@ -281,7 +297,7 @@ fn spawn_fruits(
                 ..default()
             },
             Fruit,
-            random_position()
+            random_position
         ));
     }
 }
