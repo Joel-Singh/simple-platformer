@@ -160,13 +160,6 @@ fn map_position_to_transform(
     }
 }
 
-fn move_snakehead(
-    mut query: Query<(&mut Position, &Direction), With<SnakeHead>>,
-) {
-    let (mut position, direction) = query.get_single_mut().unwrap();
-    *position = position_infront(&direction, &position)
-}
-
 fn move_snake_bodies(
     mut query_bodies: Query<(&mut Direction, &mut Position)>,
 ) {
@@ -174,7 +167,6 @@ fn move_snake_bodies(
         *position = position_infront(&direction, &position);
     }
 }
-
 
 fn change_direction_on_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -211,16 +203,6 @@ fn handle_snake_fruit_collisions(
             commands.entity(fruit).despawn();
             ev_fruit_eaten.send(FruitEaten);
         }
-    }
-}
-
-fn change_snake_body_direction(
-    mut body_direction_query: Query<&mut Direction, With<SnakeBody>>,
-    mut head_direction_query: Query<&mut Direction, (With<SnakeHead>, Without<SnakeBody>)>,
-) {
-    for mut body_direction in body_direction_query.iter_mut() {
-        let head_direction = *head_direction_query.get_single_mut().unwrap();
-        *body_direction = head_direction;
     }
 }
 
