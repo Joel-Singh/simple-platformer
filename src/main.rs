@@ -83,6 +83,7 @@ fn main() {
                 add_snake_body_on_fruit_eaten,
                 change_snake_body_directions.run_if(ready_to_move),
                 map_position_to_transform,
+                end_game.run_if(snake_head_collides_with_body)
             ).chain()
         )
         .add_event::<FruitEaten>()
@@ -199,6 +200,23 @@ fn change_direction_on_input(
             *snake_direction = Direction::Down;
         }
     }
+}
+
+fn snake_head_collides_with_body(
+    snake_head_pos: Query<&Position, With<SnakeHead>>,
+    snake_body_positions: Query<&Position, With<SnakeBody>>,
+) -> bool {
+    let snake_head_pos = snake_head_pos.get_single().unwrap();
+    for snake_body_pos in snake_body_positions.iter() {
+        if snake_body_pos.x == snake_head_pos.x && snake_body_pos.y == snake_head_pos.y {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn end_game() {
+    panic!("Game ended");
 }
 
 fn handle_snake_fruit_collisions(
